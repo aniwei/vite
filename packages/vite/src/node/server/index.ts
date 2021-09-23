@@ -257,9 +257,13 @@ export interface ViteDevServer {
   _pendingReload: Promise<void> | null
 }
 
+// 创建服务器入口
+// @arguments: inlineConfig
+// @return: ViteServer
 export async function createServer(
   inlineConfig: InlineConfig = {}
 ): Promise<ViteDevServer> {
+  // 设置参数
   const config = await resolveConfig(inlineConfig, 'serve', 'development')
   const root = config.root
   const serverConfig = config.server || {}
@@ -269,8 +273,10 @@ export async function createServer(
   const httpServer = middlewareMode
     ? null
     : await resolveHttpServer(serverConfig, middlewares)
+  // 创建 Websocket Server
   const ws = createWebSocketServer(httpServer, config)
 
+  // 监控文件
   const { ignored = [], ...watchOptions } = serverConfig.watch || {}
   const watcher = chokidar.watch(path.resolve(root), {
     ignored: ['**/node_modules/**', '**/.git/**', ...ignored],
@@ -280,6 +286,7 @@ export async function createServer(
     ...watchOptions
   }) as FSWatcher
 
+  // 插件
   const plugins = config.plugins
   const container = await createPluginContainer(config, watcher)
   const moduleGraph = new ModuleGraph(container)
@@ -287,6 +294,7 @@ export async function createServer(
 
   let exitProcess: () => void
 
+  // 定义 server 对象
   const server: ViteDevServer = {
     config: config,
     middlewares,
@@ -325,13 +333,19 @@ export async function createServer(
     listen(port?: number, isRestart?: boolean) {
       return startServer(server, port, isRestart)
     },
+    // 关闭服务器
     async close() {
+      // 取消事件监听
       process.off('SIGTERM', exitProcess)
 
       if (!process.stdin.isTTY) {
         process.stdin.off('end', exitProcess)
       }
 
+      // 关闭 文件监控
+      // 关闭 Websocket server
+      // 关闭 插件容器
+      // 关闭 HTTP server
       await Promise.all([
         watcher.close(),
         ws.close(),

@@ -51,25 +51,45 @@ function cleanOptions(options: GlobalCLIOptions) {
 }
 
 cli
+  // 指定配置文件
   .option('-c, --config <file>', `[string] use specified config file`)
+  // 指定项目根目录
   .option('-r, --root <path>', `[string] use specified root directory`)
+  // 指定 base 目录
   .option('--base <path>', `[string] public base path (default: /)`)
+  // 指定 日志 级别
   .option('-l, --logLevel <level>', `[string] silent | error | warn | all`)
+  // 
   .option('--clearScreen', `[boolean] allow/disable clear screen when logging`)
+  // 输出 debug 日志
   .option('-d, --debug [feat]', `[string | boolean] show debug logs`)
+  // 过滤日志
   .option('-f, --filter <filter>', `[string] filter debug logs`)
 
 // dev
 cli
+  // 开发命令
+  // 设置别名 serve 
+  // @example:
+  // vite
+  // vite serve
   .command('[root]') // default command
   .alias('serve')
+  // 服务器
   .option('--host <host>', `[string] specify hostname`)
+  // 端口
   .option('--port <port>', `[number] specify port`)
+  // 是否开启 https
   .option('--https', `[boolean] use TLS + HTTP/2`)
+  // 开启浏览器
   .option('--open [path]', `[boolean | string] open browser on startup`)
+  // 是否允许跨域
   .option('--cors', `[boolean] enable CORS`)
+  // 严格设置端口，如果占用就立即退出
   .option('--strictPort', `[boolean] exit if specified port is already in use`)
+  // 模式
   .option('-m, --mode <mode>', `[string] set env mode`)
+  // 强制不保留缓存
   .option(
     '--force',
     `[boolean] force the optimizer to ignore the cache and re-bundle`
@@ -79,6 +99,7 @@ cli
     // is ok here
     const { createServer } = await import('./server')
     try {
+      // 创建服务器
       const server = await createServer({
         root,
         base: options.base,
@@ -88,6 +109,7 @@ cli
         clearScreen: options.clearScreen,
         server: cleanOptions(options) as ServerOptions
       })
+      // 监听
       await server.listen()
     } catch (e) {
       createLogger(options.logLevel).error(
@@ -99,9 +121,15 @@ cli
 
 // build
 cli
+  // 构建命令
+  // @example
+  // vite build
   .command('build [root]')
+  // 目标
   .option('--target <target>', `[string] transpile target (default: 'modules')`)
+  // 输出目录
   .option('--outDir <dir>', `[string] output directory (default: dist)`)
+  // 资源文件目录
   .option(
     '--assetsDir <dir>',
     `[string] directory under outDir to place assets in (default: _assets)`
@@ -110,14 +138,17 @@ cli
     '--assetsInlineLimit <number>',
     `[number] static asset base64 inline threshold in bytes (default: 4096)`
   )
+  // 服务端渲染
   .option(
     '--ssr [entry]',
     `[string] build specified entry for server-side rendering`
   )
+  // 是否保留调试Map
   .option(
     '--sourcemap',
     `[boolean] output source maps for build (default: false)`
   )
+  // 是否压缩
   .option(
     '--minify [minifier]',
     `[boolean | "terser" | "esbuild"] enable/disable minification, ` +

@@ -37,6 +37,7 @@ if (debugIndex > 0) {
   }
 }
 
+// 实行 CLI
 function start() {
   require('../dist/node/cli')
 }
