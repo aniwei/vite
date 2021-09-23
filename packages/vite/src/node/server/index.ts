@@ -412,6 +412,7 @@ export async function createServer(
   // Internal middlewares ------------------------------------------------------
 
   // request timer
+  // 注册中间件
   if (process.env.DEBUG) {
     middlewares.use(timeMiddleware(root))
   }
