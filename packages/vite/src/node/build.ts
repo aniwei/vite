@@ -277,6 +277,8 @@ const parallelBuilds: RollupBuild[] = []
  * Bundles the app for production.
  * Returns a Promise containing the build result.
  */
+
+// 入口函数
 export async function build(
   inlineConfig: InlineConfig = {}
 ): Promise<RollupOutput | RollupOutput[]> {
@@ -305,7 +307,7 @@ async function doBuild(
       `vite v${require('vite/package.json').version} ${chalk.green(
         `building ${ssr ? `SSR bundle ` : ``}for ${config.mode}...`
       )}`
-    )
+    )·
   )
 
   const resolve = (p: string) => path.resolve(config.root, p)
